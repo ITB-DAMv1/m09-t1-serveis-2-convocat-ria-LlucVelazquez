@@ -80,6 +80,66 @@ Raó: L’usuari està autenticat però no autoritzat per aquesta acció.
 | Protecció contra atacs | Validació d'Origin per evitar CSWSH, Rate limiting | Segmentació de xarxa, Sistemes de detecció d'intrusions |
 | Exemples d'ús | Aplicacions web en temps real (xats, jocs) | Connexions directes entre servidors o dispositius IoT |
 
+## 4.
+
+### **1. Control d’accés: Rols i privilegis**
+
+| **Rol** | **Recursos/accions** | **Privilegis** |
+| :-- | :-- | :-- |
+| **Alumne** | - Taulell de comentaris<br>- Apunts i pràctiques<br>- Notes individuals | - Publicar/respondre comentaris al seu curs<br>- Descarregar apunts<br>- Veure pròpies notes |
+| **Professor** | - Taulell de comentaris<br>- Apunts, pràctiques, notes<br>- Dades alumnes | - Penjar apunts/pràctiques<br>- Assignar notes als alumnes del curs<br>- Censurar comentaris<br>- Veure dades i notes dels alumnes del curs |
+| **Cap d’estudis** | - Gestió de cursos<br>- Assignació alumnes/professors<br>- Anuncis globals | - Crear/eliminar cursos<br>- Reassignar alumnes entre cursos<br>- Fer anuncis a qualsevol taulell<br>- Veure notes i entregues de tots els alumnes |
+| **Secretaria** | - Matrícules<br>- Dades personals d’usuaris | - Donar d’alta/baixa alumnes<br>- Actualitzar dades personals (nom, compte corrent, etc.) |
+| **Desenvolupador seguretat** | - Funcionalitats del portal<br>- Configuracions de seguretat | - Provar totes les funcionalitats tècniques<br>- Accedir a logs i configuracions<br>- No pot veure dades sensibles (comptes corrents, notes, telèfons d’emergència) |
+| **Admin sistema** | - Infraestructura<br>- Backups<br>- Polítiques de seguretat | - Configurar servidors.<br>- Gestionar permisos globals<br>- Monitoritzar accés |
+
+---
+
+### **2. Gestió de contrasenyes**
+
+| **Rol** | **Normes** | **Raó** |
+| :-- | :-- | :-- |
+| **Alumne** | - Mínim 8 caràcters (majúscules, números)<br>- Canvi cada 180 dies | Equilibri entre seguretat i facilitat d’ús per usuaris poc tècnics. |
+| **Professor/Cap** | - Mínim 12 caràcters (símbols inclosos)<br>- Canvi cada 90 dies<br>- Històric (5 últimes) | Protecció reforçada per accés a dades sensibles (notes, comptes bancaris). |
+| **Secretaria** | - Autenticació en dos factors (2FA)<br>- Bloqueig després de 3 intents fallits | Accés a informació financera (comptes corrents) i d’emergència, crític per a prevenció de frau. |
+| **Desenvolupador** | - Contrasenyes temporals amb caducitat 24 hores<br>- 2FA obligatori | Minimitza riscos d’accés no autoritzat malgrat privilegis elevats. |
+| **Admin sistema** | - Claus SSH/certificats digitals<br>- Accés restringit per IP | Evita atacs de força bruta i assegura l’accés només des de ubicacions autoritzades. |
+
+
+---
+
+### **3. Protecció de la informació: Classificació de dades**
+
+| **Nivell** | **Tipus de dades** | **Mesures de protecció** |
+| :-- | :-- | :-- |
+| **Nivell 1 (Alt)** | - Comptes corrents<br>- Notes acadèmiques<br>- Telèfons d’emergència | - Encriptació AES-256 en repòs i trànsit<br>- Accés limitat a rols específics (professors, secretaria)<br>- Registre d’accés amb auditoria. |
+| **Nivell 2 (Mitjà)** | - Dades personals (nom, adreça, nacionalitat)<br>- Entregues d’alumnes | - Encriptació TLS 1.3 en trànsit<br>- Accés restringit a rols amb necessitat legítima (ex: professors veuen només alumnes del seu curs). |
+| **Nivell 3 (Baix)** | - Apunts i materials de curs<br>- Comentaris del taulell | - Control d’accés per curs<br>- Còpies de seguretat sense encriptar (dades públiques). |
+
+**Exemples:**
+
+- Les notes (Nivell 1) s’emmagatzemen en bases de dades encriptades amb accés via tokens temporals.
+- Les dades de contacte (Nivell 2) es mostren parcialment (ex: nom, però no adreça completa) als professors.
+
+---
+
+### **4. Còpies de seguretat (backups)**
+
+| **Estratègia** | **Descripció** | **Freqüència** | **Retenció** |
+| :-- | :-- | :-- | :-- |
+| **Backups complets** | Còpia completa de totes les dades (incloent Nivell 1-3) | Setmanal | 90 dies |
+| **Backups incrementals** | Còpia de canvis des de l’últim backup complet | Diària | 30 dies |
+| **Backups georedundants** | Emmagatzematge en dos centres de dades diferents (ex: AWS S3 + Google Cloud) | Automàtic | 1 any |
+| **Backups en fred** | Còpies offline en discs externs per a recuperació davant atacs ransomware | Mensual | 2 anys |
+
+**Procediments:**
+
+- Les dades de Nivell 1 s’encripten abans de pujar als servidors de backup.
+- Es realitzen proves de recuperació cada trimestre per verificar integritat.
+- Els backups incrementals s’eliminen automàticament després de 30 dies per optimitzar l’espai.
+
+
+
 ## 8.
 
    **Errors:**
