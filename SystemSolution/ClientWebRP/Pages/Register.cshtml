@@ -25,6 +25,19 @@
         <span asp-validation-for="Register.Email" class="text-warning"></span>
     </div>
     <div class="form-group">
+        <label asp-for="Register.NumEmployees"></label>
+        <input asp-for="Register.NumEmployees" class="form-control" />
+        <span asp-validation-for="Register.NumEmployees" class="text-warning"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Register.isVip"></label>
+        <select name="Register.isVip" id="Register.isVip">
+            <option value="True">Si</option>
+            <option value="False">No</option>
+        </select>
+        <span asp-validation-for="Register.isVip" class="text-warning"></span>
+    </div>
+    <div class="form-group">
         <label asp-for="Register.Password"></label>
         <input type="password" asp-for="Register.Password" class="form-control" />
         <span asp-validation-for="Register.Password" class="text-warning"></span>
