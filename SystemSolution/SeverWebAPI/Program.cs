@@ -1,8 +1,8 @@
 
 using Microsoft.EntityFrameworkCore;
-using SeverWebAPI.Data;
+using ServerWebAPI.Data;
 
-namespace SeverWebAPI
+namespace ServerWebAPI
 {
     public class Program
     {
