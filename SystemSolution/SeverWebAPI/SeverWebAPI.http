@@ -1,0 +1,6 @@
+@SeverWebAPI_HostAddress = http://localhost:5119
+
+GET {{SeverWebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
