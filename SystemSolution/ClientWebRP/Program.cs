@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 namespace ClientWebRP
 {
     public class Program
@@ -9,6 +11,20 @@ namespace ClientWebRP
             // Add services to the container.
             builder.Services.AddRazorPages();
 
+            string apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? throw new InvalidOperationException("API base URL not found");
+
+            builder.Services.AddHttpClient("ServerApi", client =>
+            {
+                client.BaseAddress = new Uri(apiBaseUrl);
+            });
+            builder.Services.AddSession();
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/Login";
+                options.AccessDeniedPath = "/AccessDenied";
+            });
+            builder.Services.AddAuthorization();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -20,7 +36,7 @@ namespace ClientWebRP
             }
 
             app.UseHttpsRedirection();
-
+            app.UseSession();
             app.UseRouting();
 
             app.UseAuthorization();

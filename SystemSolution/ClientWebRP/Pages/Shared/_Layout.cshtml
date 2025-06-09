@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var token = Context.Session.GetString("AuthToken");
+    var isLogged = !string.IsNullOrEmpty(token);
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -23,6 +27,19 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
                         </li>
+                        @if (!isLogged)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-page="/Login">Iniciar Sessió</a>
+                            </li>
+                            /*<li class="nav-item">
+                                <a class="nav-link text-white" asp-page="/Register">Registrar-se</a>
+                            </li>*/
+                        }
+                        else 
+                        {
+
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
