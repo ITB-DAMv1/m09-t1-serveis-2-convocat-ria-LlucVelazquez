@@ -99,7 +99,7 @@ namespace ServerWebAPI
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("https://localhost:7034")
+                    builder.WithOrigins("https://localhost:7209")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();

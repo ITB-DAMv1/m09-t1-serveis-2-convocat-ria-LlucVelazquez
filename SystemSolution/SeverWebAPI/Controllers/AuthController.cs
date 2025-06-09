@@ -29,7 +29,9 @@ namespace ServerWebAPI.Controllers
             {
                 UserName = model.UserName,
                 Email = model.Email,
-                Name = model.Name
+                Name = model.Name,
+                NumEmployees = model.NumEmployees,
+                IsVip = model.IsVip,
             };
             if (model.Password != model.PasswordConfirmed)
             {
@@ -48,7 +50,9 @@ namespace ServerWebAPI.Controllers
             {
                 UserName = model.UserName,
                 Email = model.Email,
-                Name = model.Name
+                Name = model.Name,
+                NumEmployees = model.NumEmployees,
+                IsVip = model.IsVip,
             };
             if (model.Password != model.PasswordConfirmed)
             {
