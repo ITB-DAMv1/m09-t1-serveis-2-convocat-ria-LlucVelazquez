@@ -6,75 +6,81 @@ namespace ClientWebRP
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+			var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddRazorPages();
+			await Task.Delay(3000);
 
-            string apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? throw new InvalidOperationException("API base URL not found");
+			// Add services to the container.
+			builder.Services.AddRazorPages();
 
-            builder.Services.AddHttpClient("ServerApi", client =>
-            {
-                client.BaseAddress = new Uri(apiBaseUrl);
-            });
-            builder.Services.AddSession();
+			string apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? throw new InvalidOperationException("API base URL not found");
+			int apiTimeout = int.Parse(builder.Configuration["ApiSettings:TimeoutSeconds"]);
 
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-                        ValidAudience = builder.Configuration["JwtSettings:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
-                    };
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            var token = context.HttpContext.Session.GetString("AuthToken");
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                context.Token = token;
-                            }
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
 
-            builder.Services.AddAuthorization();
+			builder.Services.AddHttpClient("ServerApi", client =>
+			{
+				client.BaseAddress = new Uri(apiBaseUrl);
+				client.Timeout = TimeSpan.FromSeconds(apiTimeout);
+			});
 
-            var app = builder.Build();
+			builder.Services.AddSession();
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+			builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+				.AddJwtBearer(options =>
+				{
+					options.TokenValidationParameters = new TokenValidationParameters
+					{
+						ValidateIssuer = true,
+						ValidateAudience = true,
+						ValidateLifetime = true,
+						ValidateIssuerSigningKey = true,
+						ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+						ValidAudience = builder.Configuration["JwtSettings:Audience"],
+						IssuerSigningKey = new SymmetricSecurityKey(
+							Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
+					};
+					options.Events = new JwtBearerEvents
+					{
+						OnMessageReceived = context =>
+						{
+							var token = context.HttpContext.Session.GetString("AuthToken");
+							if (!string.IsNullOrEmpty(token))
+							{
+								context.Token = token;
+							}
+							return Task.CompletedTask;
+						}
+					};
+				});
 
-            app.UseHttpsRedirection();
+			builder.Services.AddAuthorization();
 
-            app.UseRouting();
+			var app = builder.Build();
 
-            app.UseSession();
+			// Configure the HTTP request pipeline.
+			if (!app.Environment.IsDevelopment())
+			{
+				app.UseExceptionHandler("/Error");
+				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+				app.UseHsts();
+			}
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+			app.UseHttpsRedirection();
 
-            app.MapStaticAssets();
-            app.MapRazorPages()
-               .WithStaticAssets();
+			app.UseRouting();
 
-            app.Run();
-        }
+			app.UseSession();
+
+			app.UseAuthentication();
+			app.UseAuthorization();
+
+			app.MapStaticAssets();
+			app.MapRazorPages()
+			   .WithStaticAssets();
+
+			app.Run();
+		}
     }
 }
