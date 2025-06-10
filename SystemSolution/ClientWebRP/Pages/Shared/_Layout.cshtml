@@ -38,7 +38,14 @@
                         }
                         else 
                         {
-
+                            <li class="nav-item">
+                                <span class="nav-link text-white active">Hola, @User.Identity?.Name!</span>
+                            </li>
+                            <li class="nav-item">
+                                <form method="post" asp-page="/Logout">
+                                    <button type="submit" class="nav-link text-white btn btn-link" style="padding-top:9px;">Tancar sessió</button>
+                                </form>
+                            </li>
                         }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
