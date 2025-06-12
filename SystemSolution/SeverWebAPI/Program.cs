@@ -110,6 +110,7 @@ namespace ServerWebAPI
 
 
 			app.UseCors();
+			app.MapHub<Hubs.XatHub>("/xatHub");
 
 
 			if (app.Environment.IsDevelopment())
