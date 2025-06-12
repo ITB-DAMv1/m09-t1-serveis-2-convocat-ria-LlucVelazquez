@@ -3,7 +3,41 @@
 @{
     ViewData["Title"] = "Home page";
 }
+<h1>Llista Usuaris</h1>
+<br />
 
+@if (Model.Users != null && Model.Users.Any())
+{
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Nom</th>
+				<th>Email</th>
+				<th>UserName</th>
+				<th>Es Vip</th>
+				<th>Numero treballadors</th>
+				<th>Data de registre</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var user in Model.Users)
+			{
+				<tr>
+					<td>@user.Name</td>
+					<td>@user.Email</td>
+					<td>@user.UserName</td>
+					<td>@(user.IsVip ? "Sí" : "No")</td>
+					<td>@user.NumEmployees</td>
+					<td>@user.DateRegister.ToString("HH:dd/MM/yyyy")</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	<p>No hi ha usuaris registrats.</p>
+}
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>

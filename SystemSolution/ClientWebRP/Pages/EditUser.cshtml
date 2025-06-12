@@ -1,0 +1,29 @@
+﻿@page
+@model ClientWebRP.Pages.EditUserModel
+@{
+	ViewData["Title"] = "Edit User";
+}
+<h2>Edit User</h2>
+<form method="post">
+	<div class="form-group">
+		<label asp-for="User.Name" class="form-label"></label>
+		<input asp-for="User.Name" class="form-control" />
+		<span asp-validation-for="User.Name" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="User.Email" class="form-label"></label>
+		<input asp-for="User.Email" class="form-control" />
+		<span asp-validation-for="User.Email" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="User.UserName" class="form-label"></label>
+		<input asp-for="User.UserName" class="form-control" />
+		<span asp-validation-for="User.UserName" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="User.NumEmployees" class="form-label"></label>
+		<input asp-for="User.NumEmployees" class="form-control" />
+		<span asp-validation-for="User.NumEmployees" class="text-danger"></span>
+	</div>
+	<button type="submit" class="btn btn-primary">Save</button>
+</form>
