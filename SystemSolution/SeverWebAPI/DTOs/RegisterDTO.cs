@@ -27,5 +27,6 @@ namespace ServerWebAPI.DTOs
         public int NumEmployees { get; set; }
 
         public bool IsVip { get; set; }
-    }
+		public DateTime DateRegister { get; set; }
+	}
 }

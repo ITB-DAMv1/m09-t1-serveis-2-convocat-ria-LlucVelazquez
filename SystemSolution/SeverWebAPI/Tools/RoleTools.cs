@@ -7,7 +7,7 @@ namespace ServerWebAPI.Tools
         public static async Task CreateRolesInitials(IServiceProvider serviceProvider)
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            string[] roles = { "Admin", "Client" };
+            string[] roles = { "Admin", "Client","PR" };
             foreach (var role in roles)
             {
                 if (!await roleManager.RoleExistsAsync(role))

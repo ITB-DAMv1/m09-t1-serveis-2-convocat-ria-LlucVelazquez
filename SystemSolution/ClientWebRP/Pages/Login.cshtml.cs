@@ -35,7 +35,7 @@ namespace ClientWebRP.Pages
                 {
                     HttpContext.Session.SetString("AuthToken", token);
                     _logger.LogInformation("Login susccesfull");
-                    return RedirectToPage("/Index");
+                    return RedirectToPage("/DadesUser");
                 }
             }
             else

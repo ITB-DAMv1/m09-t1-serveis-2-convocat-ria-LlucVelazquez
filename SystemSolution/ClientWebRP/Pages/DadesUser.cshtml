@@ -1,0 +1,23 @@
+﻿@page
+@model ClientWebRP.Pages.DadesUserModel
+@{
+	ViewData["Title"] = "Dades del Usuari";
+	var client = Model.Profile;
+}
+<h1>Dades del Usuari</h1>
+<p>Nom</p>
+<p>@client.UserName</p>
+<p>Correu electrònic</p>
+<p>@client.Email</p>
+<p>NumEmployees</p>
+<p>@client.NumEmployees</p>
+<p>isVip</p>
+<p>@client.IsVip</p>
+<p>Data de creació</p>
+<p>@client.DateRegister.ToString("HH:dd/MM/yyyy")</p>
+
+<p>
+	<a class="btn btn-primary" asp-page="/EditUser">Editar Perfil</a>
+</p>
+<p>
+	<a class="btn btn-primary" asp-page="/Index">Tornar</a>

@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using ServerWebAPI.Data;
 using ServerWebAPI.DTOs;
 using ServerWebAPI.Model;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,13 +19,15 @@ namespace ServerWebAPI.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<AuthController> _logger;
         private readonly IConfiguration _configuration;
-        public AuthController(UserManager<ApplicationUser> userManager, ILogger<AuthController> logger, IConfiguration configuration)
-        {
-            _userManager = userManager;
-            _logger = logger;
-            _configuration = configuration;
-        }
-        [HttpPost("register")]
+		private readonly AppDbContext _context;
+		public AuthController(UserManager<ApplicationUser> userManager, ILogger<AuthController> logger, IConfiguration configuration, AppDbContext context)
+		{
+			_userManager = userManager;
+			_logger = logger;
+			_configuration = configuration;
+			_context = context;
+		}
+		[HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
             var user = new ApplicationUser
@@ -32,7 +37,8 @@ namespace ServerWebAPI.Controllers
                 Name = model.Name,
                 NumEmployees = model.NumEmployees,
                 IsVip = model.IsVip,
-            };
+				DateRegister = DateTime.Now
+			};
             if (model.Password != model.PasswordConfirmed)
             {
                 return BadRequest("Passwords do not match");
@@ -43,7 +49,81 @@ namespace ServerWebAPI.Controllers
 
             return BadRequest(result.Errors);
         }
-        [HttpPost("admin/register")]
+        [HttpGet("getUser/{id}")]
+		public async Task<IActionResult> GetUser(string id)
+		{
+			var user = await _userManager.FindByIdAsync(id);
+			if (user == null)
+			{
+				return NotFound("User not found");
+			}
+			var userDTO = new UserDTO
+			{
+				Id = user.Id,
+				UserName = user.UserName,
+				Email = user.Email,
+				Name = user.Name,
+				NumEmployees = user.NumEmployees,
+				IsVip = user.IsVip,
+				DateRegister = user.DateRegister
+			};
+			return Ok(userDTO);
+		}
+		[Authorize]
+		[HttpGet("Profile")]
+		public async Task<ActionResult<UserDTO>> GetUserProfile()
+		{
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var user = await _context.Users.FirstOrDefaultAsync(c => c.Id == userId);
+			var userDTO = new UserDTO
+			{
+				Id = user.Id,
+				UserName = user.UserName,
+				Email = user.Email,
+				Name = user.Name,
+				NumEmployees = user.NumEmployees,
+				IsVip = user.IsVip,
+				DateRegister = user.DateRegister
+			};
+			return Ok(userDTO);
+		}
+		[HttpGet("getAllUsers")]
+		public async Task<IActionResult> GetAllUsers()
+		{
+			var users = _userManager.Users.ToList();
+			var userDTOs = users.Select(user => new UserDTO
+			{
+				Id = user.Id,
+				UserName = user.UserName,
+				Email = user.Email,
+				Name = user.Name,
+				NumEmployees = user.NumEmployees,
+				IsVip = user.IsVip,
+				DateRegister = user.DateRegister
+			}).ToList();
+			return Ok(userDTOs);
+		}
+        [HttpPut("updateUser")]
+		public async Task<IActionResult> UpdateUser([FromBody] UserDTO model)
+		{
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var user = await _context.Users.FirstOrDefaultAsync(c => c.Id == userId);
+			if (user == null)
+			{
+				return NotFound("User not found");
+			}
+			user.UserName = model.UserName;
+			user.Email = model.Email;
+			user.Name = model.Name;
+			user.NumEmployees = model.NumEmployees;
+			user.IsVip = model.IsVip;
+
+			var result = await _userManager.UpdateAsync(user);
+			if (result.Succeeded)
+				return Ok("User updated successfully");
+			return BadRequest(result.Errors);
+		}
+		[HttpPost("admin/register")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterDTO model)
         {
             var user = new ApplicationUser
@@ -53,7 +133,8 @@ namespace ServerWebAPI.Controllers
                 Name = model.Name,
                 NumEmployees = model.NumEmployees,
                 IsVip = model.IsVip,
-            };
+				DateRegister = DateTime.Now
+			};
             if (model.Password != model.PasswordConfirmed)
             {
                 return BadRequest("Passwords do not match");
@@ -93,7 +174,21 @@ namespace ServerWebAPI.Controllers
             }
             return Ok(CreateToken(claims.ToArray()));
         }
-        private string CreateToken(Claim[] claims)
+        [Authorize(Roles = "Admin, PR")]
+		[HttpDelete("deleteUser/{id}")]
+		public async Task<IActionResult> DeleteUser(string id)
+		{
+			var user = await _userManager.FindByIdAsync(id);
+			if (user == null)
+			{
+				return NotFound("User not found");
+			}
+			var result = await _userManager.DeleteAsync(user);
+			if (result.Succeeded)
+				return Ok("User deleted successfully");
+			return BadRequest(result.Errors);
+		}
+		private string CreateToken(Claim[] claims)
         {
             var jwtConfig = _configuration.GetSection("JwtSettings");
             var secretKey = jwtConfig["Key"];

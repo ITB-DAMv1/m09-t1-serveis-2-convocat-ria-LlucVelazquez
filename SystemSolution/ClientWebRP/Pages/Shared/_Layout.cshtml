@@ -30,20 +30,20 @@
                         @if (!isLogged)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-page="/Login">Iniciar Sessió</a>
+                                <a class="nav-link" asp-page="/Login">Iniciar Sessió</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-page="/Register">Registrar-se</a>
+                                <a class="nav-link" asp-page="/Register">Registrar-se</a>
                             </li>
                         }
                         else 
                         {
                             <li class="nav-item">
-                                <span class="nav-link text-white active">Hola, @User.Identity?.Name!</span>
+                                <a class="nav-link" asp-page="/DadesUser">Hola @User.Identity?.Name!</a>
                             </li>
                             <li class="nav-item">
                                 <form method="post" asp-page="/Logout">
-                                    <button type="submit" class="nav-link text-white btn btn-link" style="padding-top:9px;">Tancar sessió</button>
+                                    <button type="submit" class="nav-link btn btn-link" style="padding-top:9px;">Tancar sessió</button>
                                 </form>
                             </li>
                         }
