@@ -1,0 +1,16 @@
+﻿@page
+@model ClientWebRP.Pages.DeleteModel
+@{
+	ViewData["Title"] = "Delete User";
+}
+<h1>Delete User</h1>
+
+
+<form method="post">
+	<div class="alert alert-danger">
+		<p>Are you sure you want to delete the user <strong>@Model.User.Identity.Name</strong>?</p>
+		<p>This action cannot be undone.</p>
+	</div>
+	<button type="submit" class="btn btn-danger">Delete</button>
+	<a class="btn btn-secondary" asp-page="./Index">Cancel</a>
+</form>
