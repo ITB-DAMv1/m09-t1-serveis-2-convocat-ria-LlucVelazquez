@@ -2,6 +2,7 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+	var isAdmin = User.IsInRole("Admin");
 }
 <h1>Llista Usuaris</h1>
 <br />
@@ -17,6 +18,11 @@
 				<th>Es Vip</th>
 				<th>Numero treballadors</th>
 				<th>Data de registre</th>
+				@if (isAdmin)
+				{
+					<th>Accions</th>
+				})
+				
 			</tr>
 		</thead>
 		<tbody>
@@ -29,6 +35,13 @@
 					<td>@(user.IsVip ? "Sí" : "No")</td>
 					<td>@user.NumEmployees</td>
 					<td>@user.DateRegister.ToString("HH:dd/MM/yyyy")</td>
+					@if (isAdmin)
+					{
+						<td>
+							<a class="btn btn-primary" asp-page="./EditUser" asp-route-id="@user.Id">Editar</a>
+							<a class="btn btn-danger" asp-page="./Delete" asp-route-id="@user.Id">Eliminar</a>
+						</td>
+					}
 				</tr>
 			}
 		</tbody>
